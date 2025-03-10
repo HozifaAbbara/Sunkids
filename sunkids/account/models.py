@@ -34,7 +34,7 @@ class Employee(models.Model):
     emergency_contact_phone = PhoneNumberField()
 
     def __str__(self):
-        return f'Employee: {self.account}'
+        return f'Employee: {self.account.__str__}'
 
 
 class Parent(models.Model):
@@ -44,4 +44,4 @@ class Parent(models.Model):
     work_phone = models.CharField(max_length=15, blank=True)
 
     def __str__(self):
-        return f'Parent: {self.account}'
+        return f'Parent: {self.account.__str__()}'

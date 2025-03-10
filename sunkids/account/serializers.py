@@ -25,8 +25,8 @@ class AccountSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         password = validated_data.pop('password', None)
-        first_name = validated_data.pop('first_name')
-        last_name = validated_data.pop('last_name')
+        first_name = validated_data['first_name']
+        last_name = validated_data['last_name']
         username = f'{first_name}_{last_name}'
         account = Account(username=username, **validated_data)
         if password:
@@ -49,15 +49,37 @@ class EmployeeSerializer(serializers.ModelSerializer):
         return employee
 
 class ParentSerializer(serializers.ModelSerializer):
-    account = AccountSerializer()
+    account = AccountSerializer()  # Keep as an object for POST requests
+
+    # Fields from `Account` (flattening for GET request)
+    id = serializers.IntegerField(source="account.id", read_only=True)
+    username = serializers.CharField(source="account.username", read_only=True)
+    first_name = serializers.CharField(source="account.first_name", read_only=True)
+    last_name = serializers.CharField(source="account.last_name", read_only=True)
+    phone_number = serializers.CharField(source="account.phone_number", read_only=True)
+    gender = serializers.CharField(source="account.gender", read_only=True)
+    is_staff = serializers.BooleanField(source="account.is_staff", read_only=True)
 
     class Meta:
         model = Parent
-        fields = ['account', 'address', 'work_phone']
+        fields = [
+            "id",
+            "username",
+            "first_name",
+            "last_name",
+            "phone_number",
+            "gender",
+            "is_staff",
+            "nationality",
+            "address",
+            "work_phone",
+            "account",  # Keep it for POST request
+        ]
 
     def create(self, validated_data):
-        account_data = validated_data.pop('account')
-        account_data['role'] = Account.Role.PARENT  # Set role internally, not exposed to API
+        """Handle POST request: Send account as an object"""
+        account_data = validated_data.pop("account")  # Extract account data
+        account_data["role"] = Account.Role.PARENT  # Set role internally
         account = AccountSerializer().create(account_data)
         parent = Parent.objects.create(account=account, **validated_data)
         return parent
