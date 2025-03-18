@@ -22,3 +22,5 @@ class RelationshipViewSet(viewsets.ModelViewSet):
     queryset = Relationship.objects.all()
     serializer_class = RelationshipSerializer
     permission_classes = [IsEmployeeOrAdmin]  # Only allow access to authenticated employees or admins
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['first_name', 'last_name', 'parent']  # Fields to search by

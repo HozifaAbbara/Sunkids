@@ -4,7 +4,7 @@ import axios from "axios";
 
 const API_URL = "http://localhost:8000/";
 
-const EditableTable = ({ endpoint, searchData }) => {
+const EditableTable = ({ endpoint, searchData, appName, modelName }) => {
     let token = localStorage.getItem("access_token");
 
     const [data, setData] = useState([]);
@@ -15,24 +15,47 @@ const EditableTable = ({ endpoint, searchData }) => {
     const [showConfirm, setShowConfirm] = useState(false);
     const [selectedRow, setSelectedRow] = useState(null);
 
+
+    const fetchColumns = async () => {
+        try {
+            const response = await axios.get(`${API_URL}columns/${appName}/${modelName}/`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (response.data) {
+                setColumns(response.data.columns); // Assuming the response has a "columns" array
+                console.log(columns)
+            }
+        } catch (error) {
+            console.error("Error fetching columns:", error);
+        }
+    };
+
     // Fetch data from backend dynamically
     useEffect(() => {
-        axios.get(`${API_URL}${endpoint}/`, {
-            // axios.get(`http://localhost:8000/account/parents/`, {
-            headers: { Authorization: `Bearer ${token}` }
-        })
-            .then((response) => {
-                if (response.data.length > 0) {
-                    setColumns(Object.keys(response.data[0]));
-                }
-                setData(response.data);
-                setLoading(false);
+        // Fetch columns and data when component mounts or when endpoint changes
+        fetchColumns();
+
+        console.log('BREAKER')
+
+        if (searchData && searchData.length > 0) {
+            setData(searchData); // Use search results if available
+            setLoading(false);
+        } else {
+            axios.get(`${API_URL}${endpoint}/`, {
+                headers: { Authorization: `Bearer ${token}` }
             })
-            .catch((error) => {
-                console.error("Error fetching data:", error);
-                setLoading(false);
-            });
-    }, [endpoint]);
+                .then((response) => {
+                    setData(response.data);
+                    setLoading(false);
+                    console.log(data)
+                })
+                .catch((error) => {
+                    console.error("Error fetching data:", error);
+                    setLoading(false);
+                });
+        }
+    }, [endpoint, searchData, appName, modelName]); // Re-run when any of the dependencies change
+
 
     // Enable editing for a row
     const handleEditClick = (rowIndex) => {
@@ -94,7 +117,7 @@ const EditableTable = ({ endpoint, searchData }) => {
                 <thead>
                     <tr>
                         {columns.map((col) => (
-                            <th key={col}>{col}</th>
+                            <th key={col["name"]}>{col["label"]}</th>
                         ))}
                         <th>Actions</th>
                     </tr>
@@ -102,20 +125,20 @@ const EditableTable = ({ endpoint, searchData }) => {
                 <tbody>
                     {data.map((row, rowIndex) => (
                         <tr key={row.id}>
-                            {columns.map((columnId) => (
-                                <td key={columnId}>
+                            {columns.map((col) => ( // Use col instead of columnId
+                                <td key={col.name}>
                                     {editRow === rowIndex ? (
                                         <Form.Control
                                             type="text"
-                                            value={editedData[columnId] || ""}
+                                            value={editedData[col.name] || ""}
                                             onChange={(e) =>
-                                                handleInputChange(columnId, e.target.value)
+                                                handleInputChange(col.name, e.target.value)
                                             }
                                         />
                                     ) : (
-                                        typeof row[columnId] === "object"
-                                            ? row[columnId].id // Convert object to string
-                                            : row[columnId]
+                                        row[col.name] && typeof row[col.name] === "object"
+                                            ? row[col.name].id // If it's an object, show its ID
+                                            : row[col.name] // Otherwise, show the value
                                     )}
                                 </td>
                             ))}

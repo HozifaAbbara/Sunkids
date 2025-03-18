@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from .views import TableColumnsView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,4 +25,5 @@ urlpatterns = [
     path('card/', include('card.urls')),
     path('attendance/', include('attendance.urls')),
     path('market/', include('market.urls')),
+    path('columns/<str:app_name>/<str:model_name>/', TableColumnsView.as_view(), name='table-columns'),
 ]

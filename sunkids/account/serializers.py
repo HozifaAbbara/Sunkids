@@ -11,10 +11,19 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token = super().get_token(user)
 
         # Add custom claims
-        token['username'] = user.username
+        token['user_name'] = user.username
         token['role'] = user.role  # Make sure the 'role' is defined in your Account model
 
         return token
+    
+    def validate(self, attrs):
+        data = super().validate(attrs)
+
+        # Add extra user details to response data
+        data["user_name"] = self.user.username
+        data["role"] = self.user.role
+
+        return data
 
 
 class AccountSerializer(serializers.ModelSerializer):

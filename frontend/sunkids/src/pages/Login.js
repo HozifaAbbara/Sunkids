@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Container, Form, Button, Alert } from "react-bootstrap";
 import "../styles/Login.css"; // Import styles
 
-const Login = () => {
+const Login = (props) => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState(null);
@@ -20,13 +20,15 @@ const Login = () => {
                 password,
             });
 
-            const { access, refresh } = response.data;
-
+            const { access, refresh, user_name, role } = response.data;
+            
             // Save tokens in localStorage
             localStorage.setItem("access_token", access);
             localStorage.setItem("refresh_token", refresh);
+            localStorage.setItem("username", user_name);
+            localStorage.setItem("role", role);
 
-            navigate("/reception"); // Redirect to dashboard after login
+            navigate(`/${props.endpoint}`); // Redirect to dashboard after login
 
             return true;
         } catch (err) {

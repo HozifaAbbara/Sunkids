@@ -14,9 +14,9 @@ const DataHandler = (props) => {
                 maxHeight: "300px",
                 overflowY: "auto",
             }}>
-                <EditableTable endpoint={props.endpoint} searchData={searchResults} />
+                <EditableTable endpoint={props.endpoint} searchData={searchResults} appName={props.appName} modelName={props.modelName} />
             </div>
-            <AddNewRowSidebar endpoint={props.endpoint} />
+            {/* <AddNewRowSidebar endpoint={props.endpoint} /> */}
         </div>
     );
 };

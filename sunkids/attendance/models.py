@@ -20,33 +20,33 @@ class HourPricing(models.Model):
         SECOND_ART = 'Second Art'
         THIRD_ART = 'Third Art'
 
-    rank = models.CharField(max_length=20, choices=Rank.choices, unique=True)
-    price = models.IntegerField()
+    rank = models.CharField(max_length=20, choices=Rank.choices, unique=True, verbose_name='ترتيب الساعة')
+    price = models.IntegerField(verbose_name='السعر')
 
 
 
 
 class Attendance(models.Model):
-    child = models.ForeignKey(Child, related_name='attendances', on_delete=models.PROTECT)
-    date = models.DateField(auto_now_add=True)
+    child = models.ForeignKey(Child, related_name='attendances', on_delete=models.PROTECT, verbose_name='الطفل')
+    date = models.DateField(auto_now_add=True, verbose_name="التاريخ")
     
-    entry_time = models.DateTimeField()
-    bringer = models.ForeignKey(Relationship, related_name='children_bringed', on_delete=models.PROTECT)
-    employee_in = models.ForeignKey(Employee, related_name='children_entered', on_delete=models.PROTECT)
+    entry_time = models.DateTimeField(verbose_name='وقت الدخول')
+    bringer = models.ForeignKey(Relationship, related_name='children_bringed', on_delete=models.PROTECT, verbose_name='محضر الطفل')
+    employee_in = models.ForeignKey(Employee, related_name='children_entered', on_delete=models.PROTECT, verbose_name='الموظف المستلم')
 
-    exit_time = models.DateTimeField(null = True, blank = True)
-    taker = models.ForeignKey(Relationship, related_name='children_taken', on_delete=models.PROTECT, null = True, blank = True)
-    employee_out = models.ForeignKey(Employee, related_name='children_exited', on_delete=models.PROTECT, null = True, blank = True)
+    exit_time = models.DateTimeField(null = True, blank = True, verbose_name='وقت الخروج')
+    taker = models.ForeignKey(Relationship, related_name='children_taken', on_delete=models.PROTECT, null = True, blank = True, verbose_name='آخذ الطفل')
+    employee_out = models.ForeignKey(Employee, related_name='children_exited', on_delete=models.PROTECT, null = True, blank = True, verbose_name='المسلم')
 
-    total_hours_stayed = models.DecimalField(max_digits=2, decimal_places=1, null=True, blank=True)
-    number_of_art_hours = models.DecimalField(max_digits=2, decimal_places=1, null=True, blank=True)
+    total_hours_stayed = models.DecimalField(max_digits=2, decimal_places=1, null=True, blank=True, verbose_name='اجمالي الساعات')
+    number_of_art_hours = models.DecimalField(max_digits=2, decimal_places=1, null=True, blank=True, verbose_name='ساعات الفنون')
 
-    hours_deducted_from_card = models.DecimalField(max_digits=2, decimal_places=1, default=0)
+    hours_deducted_from_card = models.DecimalField(max_digits=2, decimal_places=1, default=0, verbose_name='عدد الساعات المخصومة من البطاقة')
 
-    total_purchased_items = models.IntegerField(default=0)
-    total_hours_due = models.IntegerField(null=True, blank=True)
+    total_purchased_items = models.IntegerField(default=0, verbose_name='مجموع المشتريات')
+    total_hours_due = models.IntegerField(null=True, blank=True, verbose_name='مجموع الساعات')
 
-    total_amount_to_receive = models.IntegerField(null=True, blank=True)    
+    total_amount_to_receive = models.IntegerField(null=True, blank=True, verbose_name='الاجمالي')    
 
 
     def save(self, *args, **kwargs):

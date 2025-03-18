@@ -2,9 +2,7 @@ import React, { useState } from "react";
 import { Button, Offcanvas, Form } from "react-bootstrap";
 import axios from "axios";
 
-const API_URL = "http://localhost:8000/";
-
-const AddNewRowSidebar = ({ endpoint, onAdd }) => {
+const AddNewRowSidebar = ({ apiUrl, endpoint, formFields, onAdd }) => {
     const [show, setShow] = useState(false);
     const [formData, setFormData] = useState({});
     const [loading, setLoading] = useState(false);
@@ -19,7 +17,7 @@ const AddNewRowSidebar = ({ endpoint, onAdd }) => {
         e.preventDefault();
         setLoading(true);
 
-        axios.post(`${API_URL}${endpoint}/`, formData, {
+        axios.post(`${apiUrl}${endpoint}/`, formData, {
             headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` }
         })
             .then((response) => {
@@ -30,38 +28,46 @@ const AddNewRowSidebar = ({ endpoint, onAdd }) => {
             .finally(() => setLoading(false));
     };
 
-    return (
-        <>
-            <Button variant="success" onClick={toggleSidebar}>+ Add New</Button>
+    return React.createElement(
+        React.Fragment,
+        null,
+        React.createElement(Button, { variant: "success", onClick: toggleSidebar }, "+ Add New"),
 
-            <Offcanvas show={show} onHide={toggleSidebar} placement="end">
-                <Offcanvas.Header closeButton>
-                    <Offcanvas.Title>Add New Entry</Offcanvas.Title>
-                </Offcanvas.Header>
-                <Offcanvas.Body>
-                    <Form onSubmit={handleSubmit}>
-                        <Form.Group className="mb-3">
-                            <Form.Label>First Name</Form.Label>
-                            <Form.Control type="text" name="first_name" onChange={handleChange} required />
-                        </Form.Group>
-
-                        <Form.Group className="mb-3">
-                            <Form.Label>Last Name</Form.Label>
-                            <Form.Control type="text" name="last_name" onChange={handleChange} required />
-                        </Form.Group>
-
-                        <Form.Group className="mb-3">
-                            <Form.Label>Phone Number</Form.Label>
-                            <Form.Control type="text" name="phone_number" onChange={handleChange} required />
-                        </Form.Group>
-
-                        <Button variant="primary" type="submit" disabled={loading}>
-                            {loading ? "Saving..." : "Save"}
-                        </Button>
-                    </Form>
-                </Offcanvas.Body>
-            </Offcanvas>
-        </>
+        React.createElement(
+            Offcanvas,
+            { show: show, onHide: toggleSidebar, placement: "end" },
+            React.createElement(
+                Offcanvas.Header,
+                { closeButton: true },
+                React.createElement(Offcanvas.Title, null, "Add New Entry")
+            ),
+            React.createElement(
+                Offcanvas.Body,
+                null,
+                React.createElement(
+                    Form,
+                    { onSubmit: handleSubmit },
+                    formFields.map((field, index) =>
+                        React.createElement(
+                            Form.Group,
+                            { key: index, className: "mb-3" },
+                            React.createElement(Form.Label, null, field.label),
+                            React.createElement(Form.Control, {
+                                type: field.type || "text",
+                                name: field.name,
+                                onChange: handleChange,
+                                required: field.required || false
+                            })
+                        )
+                    ),
+                    React.createElement(
+                        Button,
+                        { variant: "primary", type: "submit", disabled: loading },
+                        loading ? "Saving..." : "Save"
+                    )
+                )
+            )
+        )
     );
 };
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 // import { Container, Col, Row } from 'react-bootstrap';
 import Header from "../components/Header";
 // import EditableTable from "../components/EditableTable";
@@ -6,12 +6,12 @@ import Header from "../components/Header";
 import DataHandler from "./DataHandler";
 // import SidBar from "../components/SidBar";
 
-const AppLayout = () => {
+const AppLayout = (props) => {
+
     return (
         <>
-            <Header />
-            <DataHandler endpoint='account/parents' />
-
+            <Header setEndPoint={props.setEndPoint} setAppName={props.setAppName} setModelName={props.setModelName} />
+            <DataHandler endpoint={props.endpoint} appName={props.appName} modelName={props.modelName} />
         </>
     );
 };

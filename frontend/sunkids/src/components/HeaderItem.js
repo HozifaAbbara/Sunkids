@@ -1,50 +1,58 @@
 import React from "react";
-import { Button, Dropdown } from "react-bootstrap";
+import { Dropdown } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
-const HeaderItem = (props) => {
+const HeaderItem = ({ onClick, text, subitems = [], setEndPoint , setAppName, setModelName}) => {
+    const navigate = useNavigate();
 
-    const subitems = props.subitems || []; // If not provided, default to an empty array
+    const handleNavigation = (path, endpoint, appName, modelName) => {
+        setEndPoint(endpoint); // Update API endpoint
+        setAppName(appName);
+        setModelName(modelName);
+        navigate(path, { replace: true }); // Properly replace history entry
+    };
 
-    return (
-        subitems.length === 0 ? (
-            <button
+    return subitems.length === 0 ? (
+        <button
+            style={{
+                borderRadius: "6px",
+                backgroundColor: "#8affff",
+                border: "1px solid #7d7f7f",
+                color: "black",
+                margin: "12px",
+                padding: "6px"
+            }}
+            onClick={onClick}
+        >
+            تسجيل الخروج
+        </button>
+    ) : (
+        <Dropdown>
+            <Dropdown.Toggle
+                variant="primary"
+                id="dropdown-basic"
                 style={{
                     borderRadius: "6px",
                     backgroundColor: "#8affff",
                     border: "1px solid #7d7f7f",
                     color: "black",
                     margin: "12px",
-                    padding: '6px'
                 }}
-                onClick={props.onClick}
             >
-                تسجيل الخروج
-            </button>
-        ) : (
-            <Dropdown>
-                <Dropdown.Toggle
-                    variant="primary"
-                    id="dropdown-basic"
-                    style={{
-                        borderRadius: "6px",
-                        backgroundColor: "#8affff",
-                        border: "1px solid #7d7f7f",
-                        color: "black",
-                        margin: "12px",
-                    }}
-                >
-                    {props.text}
-                </Dropdown.Toggle>
+                {text}
+            </Dropdown.Toggle>
 
-                <Dropdown.Menu>
-                    {props.subitems.map((item, index) => (
-                        <Dropdown.Item key={index} href="/pricing">
-                            {item}
-                        </Dropdown.Item>
-                    ))}
-                </Dropdown.Menu>
-            </Dropdown>
-        )
+            <Dropdown.Menu>
+                {subitems.map(([label, path, appName, modelName], index) => (
+                    <Dropdown.Item
+                        key={index}
+                        onClick={() => handleNavigation(`/${path}`, path, appName, modelName)}
+                    >
+                        {label}
+                    </Dropdown.Item>
+                ))}
+            </Dropdown.Menu>
+        </Dropdown>
     );
 };
 
