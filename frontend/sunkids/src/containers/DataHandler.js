@@ -5,6 +5,7 @@ import AddNewRowSidebar from "../components/AddNewRowSidebar";
 
 const DataHandler = (props) => {
     const [searchResults, setSearchResults] = useState([]);
+    const [columns, setColumns] = useState([]);
 
     return (
         <div>
@@ -14,9 +15,10 @@ const DataHandler = (props) => {
                 maxHeight: "300px",
                 overflowY: "auto",
             }}>
-                <EditableTable endpoint={props.endpoint} searchData={searchResults} appName={props.appName} modelName={props.modelName} />
+                <EditableTable endpoint={props.endpoint} searchData={searchResults} appName={props.appName}
+                    modelName={props.modelName} columns={columns} setColumns={setColumns} />
             </div>
-            {/* <AddNewRowSidebar endpoint={props.endpoint} /> */}
+            <AddNewRowSidebar endpoint={props.endpoint} formFields={columns}/>
         </div>
     );
 };

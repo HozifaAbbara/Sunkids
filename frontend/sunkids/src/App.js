@@ -8,8 +8,8 @@ import ProtectedRoute from './components/ProtectedRoute';
 const App = () => {
 
   const [endpoint, setEndPoint] = useState('child/children');
-  const [appName, setAppName] = useState('child');
-  const [modelName, setModelName] = useState('child');
+  const [appName, setAppName] = useState('');
+  const [modelName, setModelName] = useState('');
 
   return (
     <Router>

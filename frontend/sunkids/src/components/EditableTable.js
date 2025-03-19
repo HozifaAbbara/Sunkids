@@ -4,11 +4,10 @@ import axios from "axios";
 
 const API_URL = "http://localhost:8000/";
 
-const EditableTable = ({ endpoint, searchData, appName, modelName }) => {
+const EditableTable = ({ endpoint, searchData, appName, modelName, columns, setColumns }) => {
     let token = localStorage.getItem("access_token");
 
     const [data, setData] = useState([]);
-    const [columns, setColumns] = useState([]);
     const [loading, setLoading] = useState(true);
     const [editRow, setEditRow] = useState(null); // Track which row is being edited
     const [editedData, setEditedData] = useState({}); // Store temporary edits
