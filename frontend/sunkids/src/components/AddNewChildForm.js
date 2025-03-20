@@ -1,13 +1,75 @@
 import React, { useState, useEffect } from 'react';
-import { Form } from 'react-bootstrap';
+import { Button, Form } from 'react-bootstrap';
 import Select from 'react-select';
 import useAxios from '../hooks/useAxios';
 import debounce from 'lodash/debounce'; // To debounce the search query
+import axios from 'axios';
+
+const formFields = [
+    {
+        name: "first_name",
+        label: "First Name",
+        type: "text",
+        required: true,
+    },
+    {
+        name: "last_name",
+        label: "Last Name",
+        type: "text",
+        required: true,
+    },
+    {
+        name: "date_of_birth",
+        label: "Date of Birth",
+        type: "date",
+        required: true,
+    },
+    {
+        name: "gender",
+        label: "Gender",
+        type: "select",
+        required: true,
+        options: [
+            { value: "MALE", label: "Male" },
+            { value: "FEMALE", label: "Female" },
+        ],
+    },
+    {
+        name: "address",
+        label: "Address",
+        type: "text",
+        required: true,
+    },
+    {
+        name: "school",
+        label: "School",
+        type: "text",
+        required: false,
+    },
+    {
+        name: "notes",
+        label: "Notes",
+        type: "textarea",
+        required: false,
+    },
+];
 
 const AddNewChildForm = ({ API_URL }) => {
     const [parents, setParents] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedParent, setSelectedParent] = useState(null);
+
+    const [formData, setFormData] = useState({});
+    const handleChange = (e) => {
+        let { name, value } = e.target;
+
+        // Convert date to YYYY-MM-DD format
+        if (name === "date_of_birth") {
+            value = new Date(value).toISOString().split("T")[0];
+        }
+
+        setFormData({ ...formData, [name]: value });
+    };
 
     // This is the function that triggers when user types in the Select input field
     const handleSearchChange = (inputValue) => {
@@ -39,8 +101,17 @@ const AddNewChildForm = ({ API_URL }) => {
     const debouncedSearch = debounce(handleSearchChange, 500); // Delay 500ms after typing before making a request
 
 
-    const handleSubmit = () => {
-
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        setFormData({ ...formData, 'parent': selectedParent.value.id });
+        console.log(formData)
+        axios.post(`${API_URL}/child/children/`, formData, {
+            headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
+        }).then(res => {
+            console.log(res);
+        }).catch(err => {
+            console.error(err);
+        })
     }
 
     return (
@@ -50,7 +121,7 @@ const AddNewChildForm = ({ API_URL }) => {
                 <Select
                     name="parent"
                     options={parents.map((parent) => ({
-                        value: parent.id,
+                        value: parent,
                         label: parent.username, // Assuming `name` is the parent name
                     }))}
                     onChange={handleSelectChange}
@@ -62,7 +133,51 @@ const AddNewChildForm = ({ API_URL }) => {
                 />
             </Form.Group>
 
-            <button type="submit" disabled={loading}>Submit</button>
+            {(formFields || []).map((field, index) => (
+                <Form.Group key={index} className="mb-3">
+                    <Form.Label>{field.label}</Form.Label>
+
+                    {field.type === "select" ? (
+                        // Use Form.Select for dropdowns
+                        <Form.Select
+                            name={field.name}
+                            onChange={handleChange}
+                            required={field.required || false}
+                            value={formData[field.name] || ""}
+                        >
+                            <option value="">Select {field.label}</option>
+                            {field.options.map((option, i) => (
+                                <option key={i} value={option.value}>
+                                    {option.label}
+                                </option>
+                            ))}
+                        </Form.Select>
+                    ) : field.type === "textarea" ? (
+                        // Use Form.Control as textarea
+                        <Form.Control
+                            as="textarea"
+                            name={field.name}
+                            onChange={handleChange}
+                            required={field.required || false}
+                            value={formData[field.name] || ""}
+                        />
+                    ) : (
+                        // Default case for text, date, number, etc.
+                        <Form.Control
+                            type={field.type || "text"}
+                            name={field.name}
+                            onChange={handleChange}
+                            required={field.required || false}
+                            value={formData[field.name] || ""}
+                        />
+                    )}
+                </Form.Group>
+            ))}
+
+            <Button variant="primary" type="submit" disabled={loading}>
+                {loading ? "Saving..." : "Save"}
+            </Button>
+
         </Form>
     );
 };

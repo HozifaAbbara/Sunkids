@@ -44,9 +44,9 @@ const EditableTable = ({ endpoint, searchData, appName, modelName, columns, setC
                 headers: { Authorization: `Bearer ${token}` }
             })
                 .then((response) => {
+                    console.log(data)
                     setData(response.data);
                     setLoading(false);
-                    console.log(data)
                 })
                 .catch((error) => {
                     console.error("Error fetching data:", error);

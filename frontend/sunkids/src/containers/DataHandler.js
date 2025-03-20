@@ -18,7 +18,7 @@ const DataHandler = (props) => {
                 <EditableTable endpoint={props.endpoint} searchData={searchResults} appName={props.appName}
                     modelName={props.modelName} columns={columns} setColumns={setColumns} />
             </div>
-            <AddNewRowSidebar endpoint={props.endpoint} formFields={columns}/>
+            <AddNewRowSidebar endpoint={props.endpoint} formFields={columns} API_URL={'http://localhost:8000'}/>
         </div>
     );
 };

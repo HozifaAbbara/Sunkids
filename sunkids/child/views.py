@@ -14,7 +14,7 @@ class ChildViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        if user.role in ['EMPLOYEE', 'ADMIN']:
+        if user.role in ['Employee', 'Admin']:
             return Child.objects.all()
         return Child.objects.filter(parent=user.parent_profile)  # Assumes user is a parent and has a related profile
 
