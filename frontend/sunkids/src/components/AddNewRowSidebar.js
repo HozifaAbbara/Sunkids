@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Button, Dropdown } from "react-bootstrap";
 import axios from "axios";
 import AddNewChildForm from "./AddNewChildForm";
+import AddNewParentForm from "./AddNewParentForm";
 // import AddNewParentForm from "./AddNewParentForm";
 // import AddNewMarketItemForm from "./AddNewMarketItemForm";
 
@@ -48,8 +49,8 @@ const AddNewRowSidebar = ({ apiUrl, onAdd, API_URL }) => {
                 </div>
                 <div className="sidebar-body">
                     {selectedType === "child" && <AddNewChildForm onSubmit={handleFormSubmit} onAdd={onAdd} API_URL={API_URL}/>}
-                    {/* {selectedType === "parent" && <AddNewParentForm onSubmit={handleFormSubmit} />}
-                    {selectedType === "marketItem" && <AddNewMarketItemForm onSubmit={handleFormSubmit} />} */}
+                    {selectedType === "parent" && <AddNewParentForm onSubmit={handleFormSubmit} onAdd={onAdd} API_URL={API_URL} />}
+                    {/* {selectedType === "marketItem" && <AddNewMarketItemForm onSubmit={handleFormSubmit} />} */}
                 </div>
             </div>
 

@@ -158,7 +158,7 @@ AUTH_USER_MODEL = 'account.Account'
 # Simple JWT Settings
 from datetime import timedelta
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1500),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=150000),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
